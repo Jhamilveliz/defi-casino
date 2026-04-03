@@ -217,6 +217,7 @@ interface CasinoMockContextType extends CasinoMockState {
   mockPlaceBet: () => Promise<{ gano: boolean; premio: string }>;
   mockReset: () => void;
   mockTickPlayers: () => void;
+  approveTokens: () => Promise<void>;
 }
 
 // ─── Context ─────────────────────────────────────────────────────────────────
@@ -403,6 +404,13 @@ export function CasinoMockProvider({ children }: { children: ReactNode }) {
   const mockReset = () => dispatch({ type: 'RESET' });
   const mockTickPlayers = () => dispatch({ type: 'TICK_PLAYERS' });
 
+  const approveTokens = async () => {
+    if (!isConnected || !address || !signer) throw new Error('Wallet no conectada');
+    const token = new ethers.Contract(tokencasinoAddress, tokencasinoAbi, signer);
+    const tx = await token.approve(casinointegradorAddress, ethers.MaxUint256);
+    await tx.wait();
+  };
+
   return (
     <CasinoMockContext.Provider
       value={{
@@ -416,6 +424,7 @@ export function CasinoMockProvider({ children }: { children: ReactNode }) {
         mockPlaceBet,
         mockReset,
         mockTickPlayers,
+        approveTokens,
       }}
     >
       {children}
