@@ -6,6 +6,7 @@ import React, {
   useEffect,
   useCallback,
   useReducer,
+  useState,
   ReactNode,
 } from 'react';
 import { ethers } from 'ethers';
@@ -218,6 +219,8 @@ interface CasinoMockContextType extends CasinoMockState {
   mockReset: () => void;
   mockTickPlayers: () => void;
   approveTokens: () => Promise<void>;
+  isMuted: boolean;
+  setIsMuted: (val: boolean) => void;
 }
 
 // ─── Context ─────────────────────────────────────────────────────────────────
@@ -229,6 +232,7 @@ const CasinoMockContext = createContext<CasinoMockContextType | null>(null);
 export function CasinoMockProvider({ children }: { children: ReactNode }) {
   const { isConnected, address, signer } = useWallet();
   const [state, dispatch] = useReducer(casinoReducer, initialState);
+  const [isMuted, setIsMuted] = useState(false);
 
   const setSelectedNumber = (num: number | null) =>
     dispatch({ type: 'SET_SELECTED_NUMBER', payload: num });
@@ -425,6 +429,8 @@ export function CasinoMockProvider({ children }: { children: ReactNode }) {
         mockReset,
         mockTickPlayers,
         approveTokens,
+        isMuted,
+        setIsMuted,
       }}
     >
       {children}
