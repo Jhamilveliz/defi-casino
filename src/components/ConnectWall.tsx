@@ -1,13 +1,15 @@
 'use client';
-import React from 'react';
+import React, { useState } from 'react';
 import { useWallet } from '@/context/WalletContext';
+import WalletPickerModal from '@/components/WalletPickerModal';
 
 /**
  * Overlay shown inside a card when the wallet is not connected.
  * Renders a semi-transparent lock screen — the parent layout stays visible beneath.
  */
 export default function ConnectWall({ label = 'para continuar' }: { label?: string }) {
-  const { connect, isConnecting } = useWallet();
+  const { isConnecting, connectionError } = useWallet();
+  const [pickerOpen, setPickerOpen] = useState(false);
 
   return (
     <div className="absolute inset-0 z-20 flex flex-col items-center justify-center rounded-2xl bg-[#0d0d0d]/80 backdrop-blur-sm">
@@ -22,7 +24,8 @@ export default function ConnectWall({ label = 'para continuar' }: { label?: stri
       </p>
 
       <button
-        onClick={connect}
+        type="button"
+        onClick={() => setPickerOpen(true)}
         disabled={isConnecting}
         className={`px-5 py-2 rounded-xl text-sm font-black border transition-all duration-200 flex items-center gap-2
           ${isConnecting
@@ -35,6 +38,14 @@ export default function ConnectWall({ label = 'para continuar' }: { label?: stri
         )}
         {isConnecting ? 'Conectando...' : 'Conectar Wallet'}
       </button>
+
+      {connectionError && (
+        <p className="mt-3 max-w-[260px] text-center text-[11px] font-bold leading-snug text-red-400" role="alert">
+          {connectionError}
+        </p>
+      )}
+
+      <WalletPickerModal open={pickerOpen} onClose={() => setPickerOpen(false)} />
     </div>
   );
 }

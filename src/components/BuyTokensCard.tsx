@@ -36,13 +36,20 @@ export default function BuyTokensCard() {
       : '0.00';
 
   const handleBuy = () => {
-    if (!isValid || isBuying) return;
-    setIsBuying(true);
-    setTimeout(() => {
-      mockBuy();
-      setIsBuying(false);
-      setToast({ msg: `✓ Compraste ${csnoPreview} CSNO`, type: 'success' });
-    }, 1200);
+    const run = async () => {
+      if (!isValid || isBuying) return;
+      setIsBuying(true);
+      try {
+        const { tokensRecibidos } = await mockBuy();
+        setToast({ msg: `✓ Compraste ${tokensRecibidos} CSNO`, type: 'success' });
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Error al comprar tokens';
+        setToast({ msg, type: 'error' });
+      } finally {
+        setIsBuying(false);
+      }
+    };
+    void run();
   };
 
   return (

@@ -22,10 +22,17 @@ export default function RouletteCard() {
   const canBet   = isConnected && selectedNumber !== null && validBet && !spinning;
 
   const spin = () => {
-    if (!canBet) return;
-    setSpinning(true);
-    setAngle((a) => a + 360 * (5 + Math.floor(Math.random() * 5)));
-    setTimeout(() => { mockPlaceBet(); setSpinning(false); }, 1600);
+    const run = async () => {
+      if (!canBet) return;
+      setSpinning(true);
+      setAngle((a) => a + 360 * (5 + Math.floor(Math.random() * 5)));
+      try {
+        await mockPlaceBet();
+      } finally {
+        setSpinning(false);
+      }
+    };
+    void run();
   };
 
   return (

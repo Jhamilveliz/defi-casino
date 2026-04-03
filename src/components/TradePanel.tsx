@@ -35,15 +35,37 @@ export default function TradePanel() {
   const sellPrev = sellOk ? (sellN * price).toFixed(6) : '—';
 
   const doBuy = () => {
-    if (!buyOk || busyBuy) return;
-    setBusyBuy(true);
-    setTimeout(() => { mockBuy(); setBusyBuy(false); setToast(`Compraste ${buyPrev} CSNO`); }, 900);
+    const run = async () => {
+      if (!buyOk || busyBuy) return;
+      setBusyBuy(true);
+      try {
+        const { tokensRecibidos } = await mockBuy();
+        setToast(`Compraste ${tokensRecibidos} CSNO`);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Error al comprar tokens';
+        setToast(msg);
+      } finally {
+        setBusyBuy(false);
+      }
+    };
+    void run();
   };
 
   const doSell = () => {
-    if (!sellOk || busySell) return;
-    setBusySell(true);
-    setTimeout(() => { mockSell(); setBusySell(false); setToast(`Vendiste ${sellAmount} CSNO`); }, 900);
+    const run = async () => {
+      if (!sellOk || busySell) return;
+      setBusySell(true);
+      try {
+        const { ethRecibido } = await mockSell();
+        setToast(`Vendiste ${sellAmount} CSNO → ${ethRecibido} ETH`);
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Error al vender tokens';
+        setToast(msg);
+      } finally {
+        setBusySell(false);
+      }
+    };
+    void run();
   };
 
   const wrap = (inv: boolean) =>

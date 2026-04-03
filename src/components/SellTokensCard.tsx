@@ -36,14 +36,21 @@ export default function SellTokensCard() {
       : '0.000000';
 
   const handleSell = () => {
-    if (!isValid || isSelling) return;
-    const csnoSold = parsedSell.toFixed(2);
-    setIsSelling(true);
-    setTimeout(() => {
-      mockSell();
-      setIsSelling(false);
-      setToast({ msg: `✓ Vendiste ${csnoSold} CSNO → ${ethPreview} ETH`, type: 'success' });
-    }, 1200);
+    const run = async () => {
+      if (!isValid || isSelling) return;
+      const csnoSold = parsedSell.toFixed(2);
+      setIsSelling(true);
+      try {
+        const { ethRecibido } = await mockSell();
+        setToast({ msg: `✓ Vendiste ${csnoSold} CSNO → ${ethRecibido} ETH`, type: 'success' });
+      } catch (e) {
+        const msg = e instanceof Error ? e.message : 'Error al vender tokens';
+        setToast({ msg, type: 'error' });
+      } finally {
+        setIsSelling(false);
+      }
+    };
+    void run();
   };
 
   return (
