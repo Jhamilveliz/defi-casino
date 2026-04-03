@@ -1,66 +1,43 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+'use client';
+import Navbar       from '@/components/Navbar';
+import BalanceCard  from '@/components/BalanceCard';
+import RouletteCard from '@/components/RouletteCard';
+import TradePanel   from '@/components/TradePanel';
 
+/**
+ * Layout:
+ * - w-full: ancho completo de pantalla
+ * - min-h-screen: crece con el contenido (scroll natural del body)
+ * - Desktop: 2 columnas (izquierda: ruleta | derecha: balance + trade)
+ * - Mobile:  1 columna  (balance → ruleta → trade)
+ */
 export default function Home() {
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+    <div className="min-h-screen w-full bg-gray-900 text-white">
+
+      {/* Navbar — no sticky, scrollea con la página */}
+      <header className="w-full border-b border-gray-800 bg-gray-900 px-4 md:px-8 py-3">
+        <Navbar />
+      </header>
+
+      {/* Contenido */}
+      <main className="px-4 md:px-8 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+          {/* Columna izquierda: ruleta (orden 2° en mobile) */}
+          <div className="order-2 lg:order-1">
+            <RouletteCard />
+          </div>
+
+          {/* Columna derecha: balance + trade (orden 1° en mobile) */}
+          <div className="order-1 lg:order-2 flex flex-col gap-6">
+            <BalanceCard />
+            <TradePanel />
+          </div>
+
         </div>
       </main>
+
     </div>
   );
 }
